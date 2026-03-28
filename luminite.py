@@ -1,20 +1,26 @@
+import os
+# pentru PI 5
+os.environ['GPIOZERO_PIN_FACTORY'] = 'lgpio'
+
 from gpiozero import LED
 import time
 
-# Pinul 11 fizic este GPIO 17
-comanda = LED(17)
-
-print("Sistem pornit! Clipim de 10 ori...")
-
+# GPIO 17 
 try:
-    for i in range(10):
-        comanda.on()
-        print(f"Bliț {i+1}: ON")
-        time.sleep(0.3)
-        comanda.off()
-        print(f"Bliț {i+1}: OFF")
-        time.sleep(0.3)
-except KeyboardInterrupt:
-    comanda.off()
+    led_comanda = LED(17)
+    print("Succes! Am preluat controlul pinului GPIO 17 pe Pi 5.")
+    
+    while True:
+        print("LED-uri: ON")
+        led_comanda.on()
+        time.sleep(1)
+        
+        print("LED-uri: OFF")
+        led_comanda.off()
+        time.sleep(1)
 
-print("Test terminat.")
+except Exception as e:
+    print(f"Eroare neasteptata: {e}")
+except KeyboardInterrupt:
+    led_comanda.off()
+    print("\nProgram oprit.")
