@@ -1,28 +1,27 @@
-import os
-
-# pentru PI5
-os.environ['GPIOZERO_PIN_FACTORY'] = 'lgpio'
-
-from gpiozero import LED
-from gpiozero.pins.lgpio import LGPIOFactory
+import lgpio
 import time
 
-# chipul 0 controleagza pinii
-factory = LGPIOFactory(chip=0)
+# chipul principal pentru pini pe PI5
+CHIP_ID = 0
+PIN_GPIO = 17
 
 try:
-    leduri = LED(17, pin_factory=factory)
+    chip = lgpio.gpiochip_open(CHIP_ID)
+    lgpio.gpio_claim_output(chip, PIN_GPIO)
     
+
     while True:
-        print("Stare: APRINS (1)")
-        leduri.on()
+        print("ON")
+        lgpio.gpio_write(chip, PIN_GPIO, 1)
         time.sleep(1)
         
-        print("Stare: STINS (0)")
-        leduri.off()
+        print("OFF")
+        lgpio.gpio_write(chip, PIN_GPIO, 0)
         time.sleep(1)
 
 except Exception as e:
-    print(f"Eroare la nivel de chip: {e}")
+    print(f"Eroare directă LGPIO: {e}")
 except KeyboardInterrupt:
-    print("\nTest terminat. Pinul a fost eliberat.")
+    lgpio.gpio_write(chip, PIN_GPIO, 0)
+    lgpio.gpiochip_close(chip)
+    print("\nProgram oprit corect.")
